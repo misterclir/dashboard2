@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel</title>
+    <link rel="stylesheet" href="/dash/styles.css?v=<?php echo time(); ?>">
+    <script src="/dash/scripts.js?v=<?php echo time(); ?>" defer></script>
+</head>
+<body>
+    <div class="sidebar">
+        <h3>Painel</h3>
+        <a href="/dash/?tool=converter">Conversor XML-TXT</a>
+        <a href="/dash/?tool=item_bag_generator">Gerador de Item Bags</a>
+        <a href="/dash/logout.php">Sair</a>
+    </div>
+    <div class="content">
+        <?php if (isset($_GET['tool']) && $_GET['tool'] === 'converter'): ?>
+            <div class="container converter-container">
+                <h1>Conversor XML para TXT</h1>
+                <form id="uploadForm" method="post" enctype="multipart/form-data" action="/dash/?tool=converter">
+                    <label for="xmlFiles">
+                        <span class="custom-file-upload">Escolher Arquivos XML</span>
+                    </label>
+                    <input type="file" name="xmlFiles[]" id="xmlFiles" accept=".xml" multiple required onchange="updateFileList()">
+                    <div class="file-list" id="fileList"></div>
+                    <input type="submit" value="Converter" onclick="showProgress()">
+                </form>
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bg">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                </div>
+            </div>
+        <?php elseif (isset($_GET['tool']) && $_GET['tool'] === 'item_bag_generator'): ?>
+            <div class="container">
+                <h1>Gerador de Item Bags</h1>
+                <form method="post" action="/dash/?tool=item_bag_generator">
+                    <div class="form-group">
+                        <div>
+                            <label>Tipo de Emulador:</label>
+                            <select name="emulator" required>
+                                <option value="">Selecione o Emulador</option>
+                                <option value="IGCN">IGCN</option>
+                                <option value="XTEAM">XTEAM</option>
+                                <option value="LOUIS">LOUIS</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Nome da Bag:</label>
+                            <input type="text" name="bag_name" placeholder="Nome do Item Bag" required>
+                        </div>
+                        <div>
+                            <label>DropRate da Bag:</label>
+                            <input type="number" name="item_rate" placeholder="Taxa de Item" value="10000" required>
+                        </div>
+                        <div>
+                            <label>Drop de Dinheiro:</label>
+                            <input type="number" name="money_drop" placeholder="Drop de Dinheiro" value="0">
+                        </div>
+                    </div>
+                    <div id="sections"></div>
+                    <div class="button-group">
+                        <button type="button" onclick="addSection()">Adicionar Seção</button>
+                        <button type="submit" name="generate">Gerar XML</button>
+                    </div>
+                </form>
+            </div>
+        <?php else: ?>
+            <div class="container">
+                <h1>Bem-vindo ao Painel!</h1>
+            </div>
+        <?php endif; ?>
+    </div>
+    <script>
+        const categories = <?php echo json_encode($categories); ?>;
+        const itemNames = <?php echo $itemNamesJson; ?>;
+    </script>
+</body>
+</html>
